@@ -1,4 +1,6 @@
 [project]
 name = "Astroblast!"
+domain = "astroblast.easel.games"
 
 [authors]
+"u1z.DHAVSGw" = "raysplaceinspace"
