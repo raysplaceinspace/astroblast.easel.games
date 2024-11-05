@@ -1,0 +1,44 @@
+pub fn asteroid.Asteroid(
+    radius=4, speed=8, dissipate=0.75s, color=#ff0000,
+    pos = (BoundaryRadius + radius + 5) * RandomVector,
+    generation=0, parent?) {
+
+    use body=asteroid
+
+    Body(
+        pos=,
+        velocity = speed * RandomVector,
+    )
+    PolygonCollider(shape=Circle, category=Category:Asteroid)
+    RecoverSpeed
+    WrapOutsideBoundary
+
+    on Paint {
+        Spark(color=, fade=color.Darken(0.5), splatter=0.5, layer=-10, shadow=0.5)
+    }
+
+    once BeforeCollide {
+        const MaxGenerations = 3
+
+        Strobe(shine=0.5, dissipate=0.25s)
+
+        let generation = generation + 1
+        let parent = asteroid
+        if generation <= MaxGenerations {
+            repeat 2 {
+                Spawn asteroid {
+                    Asteroid(
+                        pos=Pos, parent=, generation=,
+                        radius = 0.6 * radius,
+                        speed = 1.3 * speed,
+                        dissipate = 0.7 * dissipate,
+                        color = Mix(0.25, color, #ffff00),
+                    )
+                }
+            }
+        }
+
+        Expire
+    }
+}
+

@@ -1,0 +1,104 @@
+pub prop owner.Score = 0
+pub accumulator owner.HighestScore = 0
+
+pub game fn World.Main(maxHumanPlayers=5) {
+    SolidBackground(color=#181122)
+    Camera(@(0,0), radius=BoundaryRadius, aspectRatio=1)
+
+    SpawnEachPlayer owner {
+        Subspawn ship {
+            Ship
+
+            once BeforeDespawn {
+                Eliminate
+            }
+        }
+
+        TopContent {
+            with Score {
+                if Score > 0 {
+                    H1 { %(Score) }
+                } else {
+                    VStack(align=Align:Center) {
+                        P {
+                            Span(bold=true, color=#00ff00) { "Click" }
+                            " to accelerate, and press "
+                            Span(bold=true, color=#00ff00) { "Spacebar" }
+                            " to fire"
+                        }
+                    }
+                }
+            }
+        }
+
+        once AfterEliminated {
+             if Score > HighestScore {
+                Transmission {
+                    P(color=#00ff00) { "New high score: " + HighestScore + "!" }
+                }
+                HighestScore(overwrite=Score, showOnLeaderboard=true)
+             } else {
+                Transmission {
+                    P(color=#00ff00) { "Your highest score is still " + HighestScore + ". Better luck next time!" }
+                }
+             }
+        }
+    }
+
+    once AfterGameCommenced {
+        behavior<spawnAsteroids> with Tick(2s) {
+            const MaxAsteroids = 25
+            if QueryCount(filter=Category:Asteroid) < MaxAsteroids {
+                Spawn asteroid {
+                    Asteroid
+                }
+            }
+        }
+
+        behavior<spawnPowerups> with Tick(5s) {
+            if !QueryAny(filter=Category:Powerup) {
+                Spawn powerup {
+                    surprise {
+                        ShieldPowerup,
+                        TriblastPowerup,
+                    }
+                }
+            }
+        }
+
+        behavior<spawnAliens> with Tick(10s) {
+            const MaxAliens = 2
+            if QueryCount(filter=Category:Alien) < MaxAliens {
+                Spawn ship {
+                    Alien
+                }
+            }
+        }
+    }
+
+    once AfterGameConcluded {
+        delete behavior<spawnAsteroids>
+        delete behavior<spawnPowerups>
+        delete behavior<spawnAliens>
+    }
+
+    on PlayerEliminated {
+        if !QueryAnyPlayer(isEliminated=false) {
+            ConcludeGame
+            break
+        }
+    }
+
+    once AfterGameConcluded {
+        OverlayContent {
+            VStack(align=Align:Center) {
+                Standout { FlyInWords("Game Over") }
+
+                HStack(animate=Animate:FlyFromBottom, align=Align:Center) {
+                    RaisedButton(LeaderboardPage, backgroundColor=Color:Secondary) { "High Scores" }
+                    RaisedButton(Main, backgroundColor=Color:Primary) { "Play Again" }
+                }
+            }
+        }
+    }
+}

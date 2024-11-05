@@ -1,0 +1,41 @@
+pub fn projectile.EnergonBoom(ship, target) {
+    use body=projectile
+    use speed=12, radius=0.5, turnRate=0.1rev
+    use color=#ffcc00, luminous=1, layer=-5
+    use aoe=6
+    use lifetime = 1s * Distance(ship.Pos, target) / speed
+
+    Body(
+        pos = ship.Pos,
+        velocity = speed * Direction(target - pos),
+        bullet=true,
+    )
+    PolygonSprite(shape=Equilateral(numPoints=4), glare=0.7, bloom=3)
+    PolygonSprite(shape=Circle(aoe), crater=0.85, color=color.Fade(0.95))
+
+    PolygonCollider(
+        shape=Circle, category=Category:Projectile,
+        collideWith = Category:Ship | Category:Projectile,
+        parent=ship,
+    )
+
+    once Tick(lifetime) { Expire }
+
+    once BeforeCollide that {
+        Strobe(shine=1, dissipate=0.5s)
+        repeat 5 { Spark(shine=0.5, splatter=1, dissipate=0.5s) }
+        Expire
+    }
+
+    once BeforeDespawn {
+        Spark(radius=aoe, dissipate=0.5s, shine=0.2, bloom=3, feather=1, glare=0.3)
+
+        Spawn explosion {
+            use body=explosion
+            Body(pos=projectile.Pos, immovable=true)
+            PolygonCollider(shape=Circle(aoe), category=Category:Explosion, sense=Category:Tangible)
+
+            once AfterPhysics { Expire }
+        }
+    }
+}

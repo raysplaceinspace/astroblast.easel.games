@@ -1,0 +1,39 @@
+pub fn powerup.TriblastPowerup {
+    use body=powerup
+    use radius=0.9, speed=10, luminous=1
+
+    Body(
+        pos = (BoundaryRadius + radius + 5) * RandomVector,
+        velocity = speed*RandomVector,
+    )
+
+    PolygonSprite(shape=Circle, color=#00ffaa, opacity=0.5, bloom=3, shadow=0.5)
+    ImageSprite(@triblast.svg, radius=0.85*radius)
+    PolygonCollider(shape=Circle, category=Category:Powerup, collideWith=Category:None, sense=Category:Ship, density=1)
+    RecoverSpeed
+    DecayTurnRate
+
+    WrapOutsideBoundary
+
+    on BeforeCollide that {
+        if that.Category.Overlaps(Category:Ship) {
+            use ship = that
+
+            ship.Subspawn {
+                once Tick(5s) { Expire }
+
+                NumPlasmaBolts(3)
+
+                BottomLeftContent {
+                    HStack(padding=1) {
+                        Pip(backgroundColor=#dd00ff) { Image(@triblast.svg, height=2, shadow=0.5) }
+                        "You wield the mighty Triblast!"
+                    }
+                }
+            }
+            Expire
+            break
+        }
+    }
+}
+

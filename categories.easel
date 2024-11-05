@@ -1,0 +1,7 @@
+pub tangible category Category:Ship
+pub tangible category Category:Asteroid
+pub tangible category Category:Projectile
+pub tangible category Category:Shield
+pub tangible category Category:Powerup
+pub tangible category Category:Alien
+pub tangible category Category:Explosion

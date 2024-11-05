@@ -1,0 +1,95 @@
+pub buff ship.NumPlasmaBolts = 1
+
+pub fn ship.Ship([owner]) {
+    use body=ship
+    use radius=1
+
+    Body(pos = BoundaryRadius * Random * RandomVector)
+
+    ImageSprite(@spaceshipBody.svg, ownerColor=true, shading=0.25, shadow=0.5)
+    ImageSprite(@spaceshipWindow.svg, color=#ffffff, shading=0.25)
+
+    TextSprite(
+        owner.PlayerName,
+        noRotation=true, screenOffset=@(0, 1.5), layer=-15,
+        color=#ffffff, opacity=0.25, strobe=false,
+        heightPx=22, anchorTop=true, luminous=1)
+
+    PointerAimingLine(body=ship, color=#000000, opacity=0.1, radius=0.5, layer=-20)
+
+    PolygonCollider(shape=Circle, category=Category:Ship, density=1)
+    LimitSpeed(maxSpeed=30)
+    DecayTurnRate
+
+    WrapOutsideBoundary
+
+    TouchscreenVirtualPointer
+    with TouchscreenMode {
+        if TouchscreenMode {
+            BottomRightContent {
+                HStack {
+                    Pip(KeySpacebar, borderRounding=true, backgroundColor=#bb00ff, shadow=0.5) {
+                        Image(@shipFire.svg, height=6)
+                    }
+                    Pip(Click, borderRounding=true, backgroundColor=#ff8800, shadow=0.5) {
+                        Image(@shipThrust.svg, height=6)
+                    }
+                }
+            }
+        }
+    }
+
+    on ButtonDown(Click) {
+        behavior<thrust> on BeforePhysics {
+            const ShipImpulsePerTick = 0.75
+            ApplyImpulse(ShipImpulsePerTick * Direction(Heading))
+        }
+
+        behavior<engineSparks> on Paint {
+            Spark(
+                color=#ff8800, dissipate=0.5s, radius=0.5*radius,
+                luminous=1, shine=0.5, bloom=1, layer=-5,
+                splatter=1, velocity=-25*Direction(Heading))
+        }
+    }
+
+    on ButtonUp(Click) {
+        delete behavior<thrust>
+        delete behavior<engineSparks>
+    }
+
+    on ButtonDown(KeySpacebar) {
+        CommenceGame
+
+        const AnglePerBolt = 0.03rev
+        let initialAngle = -(AnglePerBolt * (NumPlasmaBolts - 1)) / 2
+        for i in Range(0, NumPlasmaBolts) {
+            Spawn projectile {
+                PlasmaBolt(ship=, headingOffset = initialAngle + i*AnglePerBolt)
+            }
+        }
+        await Tick(0.1s)
+    }
+
+    with Pointer {
+        Heading = Angle(Pointer - Pos)
+    }
+
+    on BeforeCollide that {
+        if that.Category.Overlaps(Category:Asteroid | Category:Alien | Category:Explosion) {
+            repeat 5 {
+                Spark(color=#ffffff, luminous=1, bloom=3, feather=1, dissipate=0.75s, splatter=1, speed=10)
+            }
+
+            Transmission(audience=Audience:All) {
+                P {
+                    PlayerNameDisplay
+                    "'s ship disintegrates into space dust"
+                }
+            }
+
+            Expire
+            break
+        }
+    }
+}

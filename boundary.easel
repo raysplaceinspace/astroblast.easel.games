@@ -1,0 +1,17 @@
+pub const BoundaryRadius = 40
+
+pub fn this.WrapOutsideBoundary([body, radius]) {
+    on BeforePhysics {
+        let x = body.Pos.X
+        let y = body.Pos.Y
+        if body.Pos.X.Abs > radius + BoundaryRadius && body.Velocity.X.Sign == body.Pos.X.Sign {
+            x = -x
+        }
+
+        if body.Pos.Y.Abs > radius + BoundaryRadius && body.Velocity.Y.Sign == body.Pos.Y.Sign {
+            y = -y
+        }
+
+        Pos = @(x, y)
+    }
+}

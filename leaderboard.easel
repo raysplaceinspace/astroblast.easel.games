@@ -1,0 +1,46 @@
+pub page fn owner.LeaderboardPage {
+    Content {
+        H1 { "Highest Scores" }
+
+        P(fontSize=0.9) {
+            if !IsUserLoggedIn {
+                "Would you like to appear on the leaderboard? Please "
+                Link(LoginIntent) { "login" }
+                "."
+            }
+        }
+    }
+
+    Content<leaderboard> {
+        P { "Loading..." }
+    }
+
+    ToolbarRight {
+        FlatButton(Main, backgroundColor=Color:Primary) { "Play" }
+    }
+
+    once FetchLeaderboard([&HighestScore]) players {
+        Content<leaderboard> {
+            if players.IsEmpty {
+                P { "No players on the leaderboard... yet" }
+            }
+
+            for player in players %%{
+                ShinyPanel {
+                    HStack {
+                        P(bold=true) {
+                            %(player.PlayerName)
+                        }
+
+                        Blank(expand=true)
+
+                        P {
+                            %(player.HighestScore)
+                            " points"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

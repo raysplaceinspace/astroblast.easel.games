@@ -1,0 +1,67 @@
+field ship.PreviousShield
+
+pub fn shield.Shield(ship) {
+    use body=ship, owner=ship.Owner
+    use radius=2, luminous=1
+    use lifetime=15s
+
+    PolygonCollider(shape=Circle, category=Category:Shield, density=0)
+
+    let birth = Tick
+    with Tick(0.1s) {
+        let age = Tick - birth
+        let proportion = (age / lifetime).Clamp(0, 1)
+        PolygonSprite(shape=Circle, opacity=0.5*(1-proportion), ownerColor=true, bloom=3, shading=0.1, shadow=0.5, layer=-5)
+        if proportion >= 1 {
+            Expire
+            break
+        }
+    }
+
+    on BeforeCollide that {
+        if that.Category.Overlaps(Category:Asteroid) {
+            Expire
+            break
+        }
+    }
+
+    BottomLeftContent {
+        HStack(padding=1) {
+            Pip(backgroundColor=#dd00ff) { Image(@shield.svg, height=2, shadow=0.5) }
+            "You are protected by a shield!"
+        }
+    }
+}
+
+pub fn powerup.ShieldPowerup() {
+    use body=powerup
+    use radius=0.9, speed=10, luminous=1
+
+    Body(
+        pos = (BoundaryRadius + radius + 5) * RandomVector,
+        velocity = speed*RandomVector,
+    )
+
+    PolygonSprite(shape=Circle, color=#00ffaa, opacity=0.5, bloom=3, shadow=0.5)
+    ImageSprite(@shield.svg, radius=0.85*radius)
+    PolygonCollider(shape=Circle, category=Category:Powerup, collideWith=Category:None, sense=Category:Ship, density=1)
+    RecoverSpeed
+    DecayTurnRate
+
+    WrapOutsideBoundary
+
+    on BeforeCollide that {
+        if that.Category.Overlaps(Category:Ship) {
+            use ship = that
+
+            PreviousShield.Expire
+            PreviousShield = ship.Subspawn shield {
+                Shield(ship=)
+            }
+
+            Expire
+            break
+        }
+    }
+}
+
