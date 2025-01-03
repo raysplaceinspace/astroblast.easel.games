@@ -21,7 +21,6 @@ pub fn ship.Alien {
     WrapOutsideBoundary
 
     with Health {
-        await Paint
         let proportion = Health / maxHealth
         let color = proportion.BlendHue(#ff6600, #66ff00)
         PolygonSprite(shape=Circle(0), bloom=3, color=)
@@ -50,7 +49,7 @@ pub fn ship.Alien {
 
     on Tick(7s) {
         let hero = QueryNearest(filter=Category:Ship)
-        if (hero) {
+        if hero {
             Spawn projectile {
                 EnergonBoom(ship=, target=hero.Pos)
             }
