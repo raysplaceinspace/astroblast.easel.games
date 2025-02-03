@@ -1,4 +1,4 @@
-pub buff ship.NumPlasmaBolts = 1
+pub collect ship.NumPlasmaBolts = 1
 
 pub fn ship.Ship([owner]) {
     use body=ship

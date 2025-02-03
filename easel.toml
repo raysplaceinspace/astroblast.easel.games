@@ -4,3 +4,6 @@ domain = "astroblast.easel.games"
 
 [authors]
 "u1z.DHAVSGw" = "raysplaceinspace"
+
+[engine]
+edition = 11

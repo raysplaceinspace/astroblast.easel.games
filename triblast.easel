@@ -22,7 +22,7 @@ pub fn powerup.TriblastPowerup {
             ship.Subspawn {
                 once Tick(5s) { Expire }
 
-                NumPlasmaBolts(3)
+                give NumPlasmaBolts(3)
 
                 BottomLeftContent {
                     HStack(padding=1) {
