@@ -34,7 +34,7 @@ pub game fn World.Main(maxHumanPlayers=5) {
         once AfterEliminated {
              if Score > HighestScore {
                 Transmission {
-                    P(color=#00ff00) { "New high score: " + HighestScore + "!" }
+                    P(color=#00ff00) { "New high score: " + Score + "!" }
                 }
                 HighestScore(overwrite=Score, showOnLeaderboard=true)
              } else {
