@@ -1,4 +1,5 @@
 pub collect ship.NumPlasmaBolts = 1
+pub prop owner.IsReady = false
 
 pub fn ship.Ship([owner]) {
     use body=ship
@@ -59,7 +60,8 @@ pub fn ship.Ship([owner]) {
     }
 
     on ButtonDown(KeySpacebar) {
-        CommenceGame
+        CommenceGame(noLock=true)
+        IsReady = true
 
         const AnglePerBolt = 0.03rev
         let initialAngle = -(AnglePerBolt * (NumPlasmaBolts - 1)) / 2
@@ -76,6 +78,8 @@ pub fn ship.Ship([owner]) {
     }
 
     on BeforeCollide that {
+        if !IsReady { return }
+        
         if that.Category.Overlaps(Category:Asteroid | Category:Alien | Category:Explosion) {
             repeat 5 {
                 Spark(color=#ffffff, luminous=1, bloom=3, feather=1, dissipate=0.75s, splatter=1, speed=10)

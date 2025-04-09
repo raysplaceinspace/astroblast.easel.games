@@ -32,16 +32,27 @@ pub game fn World.Main(maxHumanPlayers=5) {
         }
 
         once AfterEliminated {
-             if Score > HighestScore {
+            if Score > HighestScore {
                 Transmission {
                     P(color=#00ff00) { "New high score: " + Score + "!" }
                 }
                 HighestScore(overwrite=Score, showOnLeaderboard=true)
-             } else {
+            } else {
                 Transmission {
                     P(color=#00ff00) { "Your highest score is still " + HighestScore + ". Better luck next time!" }
                 }
-             }
+            }
+            
+            OverlayContent {
+                VStack(align=Align:Center) {
+                    Standout { FlyInWords("Game Over") }
+    
+                    HStack(animate=Animate:FlyFromBottom, align=Align:Center) {
+                        RaisedButton(LeaderboardPage, backgroundColor=Color:Secondary) { "High Scores" }
+                        RaisedButton(RespawnPage, backgroundColor=Color:Primary) { "Play Again" }
+                    }
+                }
+            }
         }
     }
 
@@ -86,19 +97,6 @@ pub game fn World.Main(maxHumanPlayers=5) {
         if !QueryAnyPlayer(isEliminated=false) {
             ConcludeGame
             break
-        }
-    }
-
-    once AfterGameConcluded {
-        OverlayContent {
-            VStack(align=Align:Center) {
-                Standout { FlyInWords("Game Over") }
-
-                HStack(animate=Animate:FlyFromBottom, align=Align:Center) {
-                    RaisedButton(LeaderboardPage, backgroundColor=Color:Secondary) { "High Scores" }
-                    RaisedButton(Main, backgroundColor=Color:Primary) { "Play Again" }
-                }
-            }
         }
     }
 }
