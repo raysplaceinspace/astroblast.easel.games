@@ -5,6 +5,14 @@ pub game fn World.Main(maxHumanPlayers=5) {
     SolidBackground(color=#181122)
     Camera(@(0,0), radius=BoundaryRadius, aspectRatio=1)
 
+    once PlayerJoined {
+        await PlayerJoined // Wait for a second player to join before displaying a scoreboard
+        
+        SidebarContent {
+            Scoreboard(&Score)
+        }
+    }
+
     SpawnEachPlayer owner {
         Subspawn ship {
             Ship
@@ -49,7 +57,7 @@ pub game fn World.Main(maxHumanPlayers=5) {
     
                     HStack(animate=Animate:FlyFromBottom, align=Align:Center) {
                         RaisedButton(LeaderboardPage, backgroundColor=Color:Secondary) { "High Scores" }
-                        RaisedButton(RespawnPage, backgroundColor=Color:Primary) { "Play Again" }
+                        RaisedButton(Main, backgroundColor=Color:Primary) { "Play Again" }
                     }
                 }
             }
@@ -67,7 +75,7 @@ pub game fn World.Main(maxHumanPlayers=5) {
         }
 
         behavior<spawnPowerups> with Tick(5s) {
-            if !QueryAny(filter=Category:Powerup) {
+            if QueryCount(filter=Category:Powerup) < 2 {
                 Spawn powerup {
                     surprise {
                         ShieldPowerup,

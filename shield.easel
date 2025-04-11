@@ -1,6 +1,6 @@
 field ship.PreviousShield
 
-pub fn shield.Shield(ship) {
+pub fn shield.Shield(ship, forever?) {
     use body=ship, owner=ship.Owner
     use radius=2, luminous=1
     use lifetime=15s
@@ -16,12 +16,16 @@ pub fn shield.Shield(ship) {
             Expire
             break
         }
+
+        if forever { break }
     }
 
-    on BeforeCollide that {
-        if that.Category.Overlaps(Category:Asteroid) {
-            Expire
-            break
+    if !forever {
+        on BeforeCollide that {
+            if that.Category.Overlaps(Category:Asteroid) {
+                Expire
+                break
+            }
         }
     }
 
