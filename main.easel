@@ -1,7 +1,7 @@
 pub prop owner.Score = 0
 pub accumulator owner.HighestScore = 0
 
-pub game fn World.Main(maxHumanPlayers=5) {
+pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
     SolidBackground(color=#181122)
     Camera(@(0,0), radius=BoundaryRadius, aspectRatio=1)
 
