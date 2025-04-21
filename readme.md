@@ -6,6 +6,6 @@ Feel free to edit it, learn from it and republish it to your heart's content.
 
 # About Easel
 
-Easel is a 2D game programming language with multiplayer baked in.
-Make shareable little games and learn to code, the fun way!
-To learn more about Easel, go to https://easel.games.
+Easel is a 2D game programming language that makes multiplayer as easy as singleplayer.
+Whether you are a beginner or expert coder, you'll love making games with Easel!
+Are you completely new to Easel? Try our Quickstart tutorial at https://easel.games.
