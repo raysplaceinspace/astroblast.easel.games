@@ -91,7 +91,7 @@ pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
         }
 
         behavior<spawnPowerups> with Tick(5s) {
-            const MaxPowerups = (MaxLevel - 1).Clamp(0, 5)
+            const MaxPowerups = (MaxLevel - 1).Clamp(0, 3)
             if QueryCount(filter=Category:Powerup) < MaxPowerups {
                 Spawn powerup {
                     surprise {
