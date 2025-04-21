@@ -39,7 +39,7 @@ pub fn shield.Shield(ship, forever?) {
 
 pub fn powerup.ShieldPowerup() {
     use body=powerup
-    use radius=0.9, speed=10, luminous=1
+    use radius=1, speed=10, luminous=1
 
     Body(
         pos = (BoundaryRadius + radius + 5) * RandomVector,
