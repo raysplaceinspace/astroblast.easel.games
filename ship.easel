@@ -63,14 +63,18 @@ pub fn ship.Ship([owner]) {
         CommenceGame(noLock=true)
         BeginPlaying
 
-        const AnglePerBolt = 0.03rev
-        let initialAngle = -(AnglePerBolt * (NumPlasmaBolts - 1)) / 2
-        for i in Range(0, NumPlasmaBolts) {
-            Spawn projectile {
-                PlasmaBolt(ship=, headingOffset = initialAngle + i*AnglePerBolt)
+        behavior<rapidFire> with Tick(0.2s) {
+            const AnglePerBolt = 0.03rev
+            let initialAngle = -(AnglePerBolt * (NumPlasmaBolts - 1)) / 2
+            for i in Range(0, NumPlasmaBolts) {
+                Spawn projectile {
+                    PlasmaBolt(ship=, headingOffset = initialAngle + i*AnglePerBolt)
+                }
             }
         }
-        await Tick(0.1s)
+    }
+    on ButtonUp(KeySpacebar) {
+        delete behavior<rapidFire>
     }
 
     with Pointer {
