@@ -1,6 +1,6 @@
 pub fn powerup.TriblastPowerup {
     use body=powerup
-    use radius=1, speed=10, luminous=1
+    use radius=1.5, speed=15, luminous=1
 
     Body(
         pos = (BoundaryRadius + radius + 5) * RandomVector,
@@ -20,7 +20,7 @@ pub fn powerup.TriblastPowerup {
             use ship = that
 
             ship.Subspawn {
-                once Tick(5s) { Expire }
+                once Tick(10s) { Expire }
 
                 give NumPlasmaBolts(3)
 

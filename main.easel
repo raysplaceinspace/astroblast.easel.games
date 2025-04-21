@@ -1,6 +1,9 @@
 pub prop owner.Score = 0
 pub accumulator owner.HighestScore = 0
 
+pub prop owner.Level
+pub collect World.MaxLevel ~ FindMax
+
 pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
     SolidBackground(color=#181122)
     Camera(@(0,0), radius=BoundaryRadius, aspectRatio=1)
@@ -22,6 +25,19 @@ pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
             }
         }
 
+        with Score {
+            Level = 1 + Floor(Sqrt(Score / 100))
+            give MaxLevel(Level)
+        }
+
+        once AfterGameCommenced {
+            with Level {
+                TopTransmission(duration=3s) {
+                    H1(animate=Animate:FlyFromBottom) { "Level " + Level }
+                }
+            }
+        }
+        
         TopContent {
             with Score {
                 if Score > 0 {
@@ -50,7 +66,7 @@ pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
                     P(color=#00ff00) { "Your highest score is still " + HighestScore + ". Better luck next time!" }
                 }
             }
-            
+                
             OverlayContent {
                 VStack(align=Align:Center) {
                     Standout { FlyInWords("Game Over") }
@@ -66,7 +82,7 @@ pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
 
     once AfterGameCommenced {
         behavior<spawnAsteroids> with Tick(2s) {
-            const MaxAsteroids = 25
+            const MaxAsteroids = 5 * MaxLevel
             if QueryCount(filter=Category:Asteroid) < MaxAsteroids {
                 Spawn asteroid {
                     Asteroid
@@ -75,7 +91,8 @@ pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
         }
 
         behavior<spawnPowerups> with Tick(5s) {
-            if QueryCount(filter=Category:Powerup) < 2 {
+            const MaxPowerups = (MaxLevel - 1).Clamp(0, 5)
+            if QueryCount(filter=Category:Powerup) < MaxPowerups {
                 Spawn powerup {
                     surprise {
                         ShieldPowerup,
@@ -86,7 +103,7 @@ pub game fn World.Main(maxHumanPlayers=5, allowRejoining=true) {
         }
 
         behavior<spawnAliens> with Tick(10s) {
-            const MaxAliens = 2
+            const MaxAliens = (MaxLevel - 2).Max(0)
             if QueryCount(filter=Category:Alien) < MaxAliens {
                 Spawn ship {
                     Alien

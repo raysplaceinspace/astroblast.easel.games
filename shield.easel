@@ -1,9 +1,9 @@
 field ship.PreviousShield
 
-pub fn shield.Shield(ship, forever?) {
+pub fn shield.Shield(ship) {
     use body=ship, owner=ship.Owner
     use radius=2, luminous=1
-    use lifetime=15s
+    use lifetime=10s
 
     PolygonCollider(shape=Circle, category=Category:Shield, density=0)
 
@@ -15,17 +15,6 @@ pub fn shield.Shield(ship, forever?) {
         if proportion >= 1 {
             Expire
             break
-        }
-
-        if forever { break }
-    }
-
-    if !forever {
-        on BeforeCollide that {
-            if that.Category.Overlaps(Category:Asteroid) {
-                Expire
-                break
-            }
         }
     }
 
@@ -39,7 +28,7 @@ pub fn shield.Shield(ship, forever?) {
 
 pub fn powerup.ShieldPowerup() {
     use body=powerup
-    use radius=1, speed=10, luminous=1
+    use radius=1.5, speed=15, luminous=1
 
     Body(
         pos = (BoundaryRadius + radius + 5) * RandomVector,

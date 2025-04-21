@@ -77,14 +77,12 @@ pub fn ship.Ship([owner]) {
         Heading = Angle(Pointer - Pos)
     }
 
-    // Give the player an initial shield while they figure out how to play
-    ship.Subspawn shield {
-        Shield(ship=, forever=true)
-        once BeginPlaying { Expire }
-    }
+    PolygonSprite<initialShield>(shape=Circle(radius=2), opacity=0.5, ownerColor=true, luminous=1, bloom=3, shading=0.1, shadow=0.5, layer=-5)
 
     // Pause here until the player actually starts playing
     await BeginPlaying
+
+    delete PolygonSprite<initialShield>
 
     on BeforeCollide that {
         if that.Category.Overlaps(Category:Asteroid | Category:Alien | Category:Explosion) {
